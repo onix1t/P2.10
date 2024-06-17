@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <unordered_set>
 
 using namespace std;
@@ -10,103 +10,113 @@ struct Node {
     Node(int d) : data(d), next(nullptr) {}
 };
 
-// Класс стека на основе однонаправленного списка
-class Stack {
+// Класс очереди на основе однонаправленного списка
+class Queue {
 private:
-    Node* top;
+    Node* front;  // Указатель на начало очереди
+    Node* rear;   // Указатель на конец очереди
 
 public:
-    Stack() : top(nullptr) {}
+    Queue() : front(nullptr), rear(nullptr) {}
 
-    // Метод добавления элемента в стек
-    void push(int data) {
+    // Метод добавления элемента в очередь
+    void enqueue(int data) {
         Node* newNode = new Node(data);
-        newNode->next = top;
-        top = newNode;
-    }
-
-    // Метод удаления элемента из стека
-    void pop() {
-        if (top != nullptr) {
-            Node* temp = top;
-            top = top->next;
-            delete temp;
+        if (rear == nullptr) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
         }
     }
 
-    // Метод получения верхнего элемента стека
+    // Метод удаления элемента из очереди
+    void dequeue() {
+        if (front == nullptr) {
+            cerr << "Очередь пустая" << endl;
+            return;
+        }
+        Node* temp = front;
+        front = front->next;
+        if (front == nullptr) {
+            rear = nullptr;
+        }
+        delete temp;
+    }
+
+    // Метод получения первого элемента очереди
     int peek() const {
-        if (top != nullptr) {
-            return top->data;
+        if (front != nullptr) {
+            return front->data;
         }
-        throw runtime_error("Стэк пустой");
+        throw runtime_error("Очередь пустая");
     }
 
-    // Метод проверки, пуст ли стек
+    // Метод проверки, пуста ли очередь
     bool isEmpty() const {
-        return top == nullptr;
+        return front == nullptr;
     }
 
-    // Метод очистки стека
+    // Метод очистки очереди
     void clear() {
         while (!isEmpty()) {
-            pop();
+            dequeue();
         }
     }
 
     // Деструктор для очистки памяти
-    ~Stack() {
+    ~Queue() {
         clear();
     }
 
-    // Метод добавления уникальных элементов из двух стеков
-    static Stack mergeUnique(Stack& st1, Stack& st2) {
+    // Метод объединения двух очередей в одну с уникальными элементами
+    static Queue mergeUnique(Queue& q1, Queue& q2) {
         unordered_set<int> seen;
-        Stack result;
+        Queue result;
 
-        // Вспомогательный стек для временного хранения элементов
-        Stack temp;
+        // Вспомогательная очередь для временного хранения элементов
+        Queue temp;
 
-        // Обработка первого стека
-        while (!st1.isEmpty()) {
-            int data = st1.peek();
+        // Обработка первой очереди
+        while (!q1.isEmpty()) {
+            int data = q1.peek();
             if (seen.find(data) == seen.end()) {
                 seen.insert(data);
-                result.push(data);
+                result.enqueue(data);
             }
-            temp.push(data);
-            st1.pop();
+            temp.enqueue(data);
+            q1.dequeue();
         }
 
-        // Восстановление первого стека
+        // Восстановление первой очереди
         while (!temp.isEmpty()) {
-            st1.push(temp.peek());
-            temp.pop();
+            q1.enqueue(temp.peek());
+            temp.dequeue();
         }
 
-        // Обработка второго стека
-        while (!st2.isEmpty()) {
-            int data = st2.peek();
+        // Обработка второй очереди
+        while (!q2.isEmpty()) {
+            int data = q2.peek();
             if (seen.find(data) == seen.end()) {
                 seen.insert(data);
-                result.push(data);
+                result.enqueue(data);
             }
-            temp.push(data);
-            st2.pop();
+            temp.enqueue(data);
+            q2.dequeue();
         }
 
-        // Восстановление второго стека
+        // Восстановление второй очереди
         while (!temp.isEmpty()) {
-            st2.push(temp.peek());
-            temp.pop();
+            q2.enqueue(temp.peek());
+            temp.dequeue();
         }
 
         return result;
     }
 
-    // Метод печати элементов стека
+    // Метод печати элементов очереди
     void print() const {
-        Node* current = top;
+        Node* current = front;
         while (current != nullptr) {
             cout << current->data << " ";
             current = current->next;
@@ -122,25 +132,30 @@ int main() {
 
     cout << "Практика 10 | Вариант 7\r\n\r\n";
     
-    Stack st1;
-    Stack st2;
+    Queue q1;
+    Queue q2;
 
-    // Добавление элементов в первый стек
-    st1.push(1);
-    st1.push(2);
-    st1.push(3);
+    // Добавление элементов в первую очередь
+    q1.enqueue(1);
+    q1.enqueue(2);
+    q1.enqueue(3);
 
-    // Добавление элементов во второй стек
-    st2.push(3);
-    st2.push(4);
-    st2.push(5);
+    // Добавление элементов во вторую очередь
+    q2.enqueue(3);
+    q2.enqueue(4);
+    q2.enqueue(5);
 
-    // Формирование нового стека с уникальными элементами
-    Stack st = Stack::mergeUnique(st1, st2);
+    // Формирование новой очереди с уникальными элементами
+    Queue q = Queue::mergeUnique(q1, q2);
 
     // Печать результата
+
+    cout << "Первая очередь: ";
+    q1.print();
+    cout << "Вторая очередь: ";
+    q2.print();
     cout << "Итог: ";
-    st.print();
+    q.print();
 
     return 0;
 }
