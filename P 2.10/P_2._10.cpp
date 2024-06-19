@@ -30,7 +30,7 @@ public:
         }
     }
 
-    // Метод удаления элемента из очереди
+    // Функция удаления элемента из очереди
     void dequeue() {
         if (front == nullptr) {
             cerr << "Очередь пустая" << endl;
@@ -44,7 +44,7 @@ public:
         delete temp;
     }
 
-    // Метод получения первого элемента очереди
+    // Функция получения первого элемента очереди
     int peek() const {
         if (front != nullptr) {
             return front->data;
@@ -52,12 +52,12 @@ public:
         throw runtime_error("Очередь пустая");
     }
 
-    // Метод проверки, пуста ли очередь
+    // Функция проверки на пустую очередь
     bool isEmpty() const {
         return front == nullptr;
     }
 
-    // Метод очистки очереди
+    // Функция очистки очереди
     void clear() {
         while (!isEmpty()) {
             dequeue();
@@ -74,7 +74,7 @@ public:
         unordered_set<int> seen;
         Queue result;
 
-        // Вспомогательная очередь для временного хранения элементов
+        // Очередь для временного хранения элементов
         Queue temp;
 
         // Обработка первой очереди
@@ -125,7 +125,6 @@ public:
     }
 };
 
-// Тестирование
 int main() {
 
     setlocale(LC_ALL, "ru");
@@ -149,7 +148,6 @@ int main() {
     Queue q = Queue::mergeUnique(q1, q2);
 
     // Печать результата
-
     cout << "Первая очередь: ";
     q1.print();
     cout << "Вторая очередь: ";
